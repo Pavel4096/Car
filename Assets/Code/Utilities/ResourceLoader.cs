@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 
-namespace Car
+namespace Car.Utilities
 {
-    internal static class ResourcesLoader
+    public static class ResourceLoader
     {
         public static GameObject Load(ResourcePath path)
         {

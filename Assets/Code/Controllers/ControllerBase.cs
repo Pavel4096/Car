@@ -27,7 +27,7 @@ namespace Car
             isDisposed = true;
         }
 
-        protected void AddController(ControllerBase controller)
+        public void AddController(ControllerBase controller)
         {
             if(controller != null)
                 controllers.Add(controller);

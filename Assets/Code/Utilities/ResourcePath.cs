@@ -1,6 +1,6 @@
-﻿namespace Car
+﻿namespace Car.Utilities
 {
-    internal class ResourcePath
+    public class ResourcePath
     {
         public string resourcePath;
 

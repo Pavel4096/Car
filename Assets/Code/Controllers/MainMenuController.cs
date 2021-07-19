@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Car.Utilities;
+using UnityEngine;
 
 namespace Car
 {
@@ -7,7 +8,7 @@ namespace Car
         private MainMenuView mainMenuView;
         private PlayerProfile playerProfile;
 
-        private readonly ResourcePath mainMenuViewPath = new ResourcePath("MainMenuView");
+        private readonly ResourcePath mainMenuViewPath = new ResourcePath("MainMenu");
 
         public MainMenuController(PlayerProfile _playerProfile, Transform menuRoot)
         {
@@ -16,9 +17,14 @@ namespace Car
             mainMenuView.StartButton.onClick.AddListener(StartGame);
         }
 
+        protected override void OnDispose()
+        {
+            mainMenuView.StartButton.onClick.RemoveAllListeners();
+        }
+
         private MainMenuView LoadView(Transform menuRoot)
         {
-            var mainMenuViewObject = Object.Instantiate(ResourcesLoader.Load(mainMenuViewPath), menuRoot, false);
+            var mainMenuViewObject = Object.Instantiate(ResourceLoader.Load(mainMenuViewPath), menuRoot, false);
 
             AddObject(mainMenuViewObject);
 
@@ -28,11 +34,6 @@ namespace Car
         private void StartGame()
         {
             playerProfile.GameState.Value = GameState.Game;
-        }
-
-        protected override void OnDispose()
-        {
-            mainMenuView.StartButton.onClick.RemoveAllListeners();
         }
     }
 }
