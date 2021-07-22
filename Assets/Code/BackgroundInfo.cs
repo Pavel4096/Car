@@ -52,7 +52,7 @@ namespace Car
             Transform backgroundTransform;
             var position = background.position;
 
-            position.x -= width;
+            position.x += width;
             background.position = position;
             backgroundTransform = backgroundTransform0;
             backgroundTransform0 = backgroundTransform1;
