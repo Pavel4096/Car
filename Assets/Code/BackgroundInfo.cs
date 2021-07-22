@@ -28,8 +28,6 @@ namespace Car
 
         public void UpdateBackground(float speed)
         {
-            Transform backgroundTransform;
-
             backgroundTransform0.position += new Vector3(speed*speedMultiplier, 0.0f, 0.0f);
             backgroundTransform1.position += new Vector3(speed*speedMultiplier, 0.0f, 0.0f);
 

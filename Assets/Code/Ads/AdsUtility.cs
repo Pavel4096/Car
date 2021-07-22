@@ -93,6 +93,7 @@ namespace Car
         {
             finishHandler?.Invoke();
             finishHandler = null;
+            LoadAd();
         }
     }
 }
