@@ -2,7 +2,7 @@
 
 namespace Car
 {
-    internal class Property<T> : IReadOnlyProperty<T>
+    public class Property<T> : IReadOnlyProperty<T>
     {
         private T propertyValue;
         private Action<T> handlers;

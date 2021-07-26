@@ -1,9 +1,10 @@
 ﻿using Car.Utilities;
+using Car.Abilities;
 using UnityEngine;
 
 namespace Car
 {
-    internal sealed class CarController : ControllerBase
+    internal sealed class CarController : ControllerBase, IAbilityActivator
     {
         private CarView carView;
         private PlayerProfile playerProfile;
@@ -13,6 +14,16 @@ namespace Car
         {
             playerProfile = _playerProfile;
             carView = LoadView();
+        }
+
+        public GameObject GetViewObject()
+        {
+            return carView.gameObject;
+        }
+
+        public PlayerProfile GetPlayerProfile()
+        {
+            return playerProfile;
         }
 
         private CarView LoadView()
