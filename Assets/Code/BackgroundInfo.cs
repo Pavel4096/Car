@@ -47,12 +47,12 @@ namespace Car
             }
         }
 
-        private void ChangeBackground(float distance, Transform background)
+        private void ChangeBackground(float widthAndDirection, Transform background)
         {
             Transform backgroundTransform;
             var position = background.position;
 
-            position.x += width;
+            position.x += widthAndDirection;
             background.position = position;
             backgroundTransform = backgroundTransform0;
             backgroundTransform0 = backgroundTransform1;

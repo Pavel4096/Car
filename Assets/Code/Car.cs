@@ -1,14 +1,20 @@
 ﻿namespace Car
 {
-    internal class Car
+    public class Car : IUpgradableCar
     {
-        public float Speed => speed;
+        public float Speed { get; set; }
 
-        private float speed;
+        private readonly float defaultSpeed;
 
         public Car(float _speed)
         {
-            speed = _speed;
+            defaultSpeed = _speed;
+            Reset();
+        }
+
+        public void Reset()
+        {
+            Speed = defaultSpeed;
         }
     }
 }
