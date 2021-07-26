@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Car
 {
     [Serializable]
-    internal struct BackgroundInfo
+    public class BackgroundInfo
     {
         public Transform backgroundTransform0;
         public Transform backgroundTransform1;
@@ -28,8 +28,6 @@ namespace Car
 
         public void UpdateBackground(float speed)
         {
-            Transform backgroundTransform;
-
             backgroundTransform0.position += new Vector3(speed*speedMultiplier, 0.0f, 0.0f);
             backgroundTransform1.position += new Vector3(speed*speedMultiplier, 0.0f, 0.0f);
 
@@ -37,26 +35,28 @@ namespace Car
             {
                 if(backgroundTransform0.position.x > leftBorder)
                 {
-                    var position = backgroundTransform1.position;
-                    position.x -= width;
-                    backgroundTransform1.position = position;
-                    backgroundTransform = backgroundTransform0;
-                    backgroundTransform0 = backgroundTransform1;
-                    backgroundTransform1 = backgroundTransform;
+                    ChangeBackground(-width, backgroundTransform1);
                 }
             }
             else if(speed < 0)
             {
                 if(backgroundTransform1.position.x < rightBorder)
                 {
-                    var position = backgroundTransform0.position;
-                    position.x += width;
-                    backgroundTransform0.position = position;
-                    backgroundTransform = backgroundTransform0;
-                    backgroundTransform0 = backgroundTransform1;
-                    backgroundTransform1 = backgroundTransform;
+                    ChangeBackground(width, backgroundTransform0);
                 }
             }
+        }
+
+        private void ChangeBackground(float distance, Transform background)
+        {
+            Transform backgroundTransform;
+            var position = background.position;
+
+            position.x += width;
+            background.position = position;
+            backgroundTransform = backgroundTransform0;
+            backgroundTransform0 = backgroundTransform1;
+            backgroundTransform1 = backgroundTransform;
         }
     }
 }

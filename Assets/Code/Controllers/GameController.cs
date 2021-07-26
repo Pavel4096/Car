@@ -19,11 +19,11 @@ namespace Car
             game = _game;
             gameState = new Property<GameState>();
             moveProperty = new Property<float>();
-            playerProfile = new PlayerProfile(new Car(carSpeed), gameState);
+            playerProfile = new PlayerProfile(new Car(carSpeed), gameState, new AnalyticsUtility(), new AdsUtility());
             gameState.Subscribe(StateChanged);
-            gameState.Value = GameState.MainMenu;
 
-            UpdateUtility.AddGameUpdate(GameUpdate);
+            gameState.Value = GameState.MainMenu;
+            playerProfile.AnalyticsUtility.GameStartTime();
         }
 
         protected override void OnDispose()
@@ -46,13 +46,9 @@ namespace Car
                 case GameState.Game:
                     currentController.AddController(new CarController(playerProfile));
                     currentController.AddController(new BackgroundController(playerProfile, moveProperty));
+                    currentController.AddController(new InputController(moveProperty));
                     break;
             }
-        }
-
-        private void GameUpdate()
-        {
-            moveProperty.Value = -0.2f;
         }
     }
 }

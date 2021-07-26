@@ -63,7 +63,7 @@ namespace Car
                 background.backgroundTransform0.GetComponent<SpriteRenderer>().size = background0Size;
                 background.backgroundTransform1.GetComponent<SpriteRenderer>().size = background1Size;
 
-                background.UpdatePosition( -width/2 - (background0Size.x - width)/2, width/2 + (background0Size.x - width)/2, background0Size.x);
+                background.UpdatePosition( 0, 0, background0Size.x);
             }
         }
     }

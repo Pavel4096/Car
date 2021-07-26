@@ -27,13 +27,14 @@ namespace Car
             var mainMenuViewObject = Object.Instantiate(ResourceLoader.Load(mainMenuViewPath), menuRoot, false);
 
             AddObject(mainMenuViewObject);
+            playerProfile.AnalyticsUtility.MenuEntered("MainMenu");
 
             return mainMenuViewObject.GetComponent<MainMenuView>();
         }
 
         private void StartGame()
         {
-            playerProfile.GameState.Value = GameState.Game;
+            playerProfile.AdsUtility.ShowAd(() => playerProfile.GameState.Value = GameState.Game);
         }
     }
 }

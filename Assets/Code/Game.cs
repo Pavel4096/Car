@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Car
 {
-    internal sealed class Game : MonoBehaviour
+    public class Game : MonoBehaviour
     {
         public Transform menuRoot;
         
@@ -12,10 +12,9 @@ namespace Car
         private void Awake()
         {
             gameController = new GameController(this);
-            //Debug.Log($"{Camera.main.orthographicSize*2*Camera.main.aspect} x {Camera.main.orthographicSize*2}");
         }
 
-        void Update()
+        private void Update()
         {
             UpdateUtility.GameUpdate();
         }
