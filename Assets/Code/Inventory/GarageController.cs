@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace Car.Inventory
 {
@@ -10,7 +11,7 @@ namespace Car.Inventory
         private IInventoryController inventoryController;
         private IUpgradableCar upgradableCar;
 
-        public GarageController(List<ItemUpgradeConfig> configs, IUpgradableCar _upgradableCar)
+        public GarageController(List<ItemUpgradeConfig> configs, IInventoryView _inventoryView, IUpgradableCar _upgradableCar, Transform uiroot)
         {
             upgradableCar = _upgradableCar;
             upgradeHandlers = new UpgradeHandlersRepository(configs);
@@ -18,18 +19,24 @@ namespace Car.Inventory
             itemsRepository = new ItemsRepository(GetItemConfigs(configs));
             AddController(itemsRepository);
             inventoryModel = new InventoryModel();
-            inventoryController = new InventoryController(inventoryModel, null, itemsRepository);
+            inventoryController = new InventoryController(inventoryModel, itemsRepository, uiroot);
             AddController(inventoryController);
+            inventoryController.Exit += Exit;
         }
 
         public void Enter()
         {
-            inventoryController.Show(Exit);
+            inventoryController.Show();
         }
 
         public void Exit()
         {
             ApplyEquippedUpgrades(upgradeHandlers.UpgradeHandlers);
+        }
+
+        protected override void OnDispose()
+        {
+            inventoryController.Exit -= Exit;
         }
 
         private List<ItemConfig> GetItemConfigs(List<ItemUpgradeConfig> configs)

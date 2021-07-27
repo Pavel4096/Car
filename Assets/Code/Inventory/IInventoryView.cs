@@ -7,6 +7,9 @@ namespace Car.Inventory
     {
         event Action<IItem> Selected;
         event Action<IItem> Deselected;
-        void Display(List<IItem> items);
+        event Action Exit;
+        void Init();
+        void Display(IReadOnlyDictionary<int, IItem> items);
+        void Dispose();
     }
 }

@@ -48,6 +48,7 @@ namespace Car.Abilities
             foreach(var button in buttons)
             {
                 button.onClick.RemoveAllListeners();
+                button.gameObject.SetActive(false);
             }
         }
 

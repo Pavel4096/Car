@@ -11,7 +11,7 @@
 
         public void Apply(IAbilityActivator activator)
         {
-            activator.GetPlayerProfile().SpeedMultiplier = speedMultiplier;
+            activator.GetPlayerProfile().Car.SpeedMultiplier = speedMultiplier;
         }
     }
 }
