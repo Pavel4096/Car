@@ -2,20 +2,20 @@
 
 namespace Car.Abilities
 {
-    public class AbilitiesRepository : ControllerBase, IAbilityRepository
+    public class AbilitiesRepository : ControllerBase, IRepository<int, IAbility>
     {
-        public IReadOnlyDictionary<int, IAbility> Abilities => abilities;
+        public IReadOnlyDictionary<int, IAbility> Items => abilities;
 
         private Dictionary<int, IAbility> abilities = new Dictionary<int, IAbility>();
 
-        public AbilitiesRepository(List<AbilityConfig> configs) => Populate(abilities, configs);
+        public AbilitiesRepository(IAbilityConfig[] configs) => Populate(abilities, configs);
 
         protected override void OnDispose()
         {
             abilities.Clear();
         }
 
-        private void Populate(Dictionary<int, IAbility> abilities, List<AbilityConfig> configs)
+        private void Populate(Dictionary<int, IAbility> abilities, IAbilityConfig[] configs)
         {
             foreach(var config in configs)
             {
@@ -25,12 +25,14 @@ namespace Car.Abilities
             }
         }
 
-        private IAbility CreateAbility(AbilityConfig config)
+        private IAbility CreateAbility(IAbilityConfig config)
         {
-            switch(config.type)
+            switch(config.Type)
             {
                 case AbilityType.Speedup:
-                    return new SpeedupAbility(config.value);
+                    return new SpeedupAbility(config.Value);
+                case AbilityType.Grenade:
+                    return new GrenadeAbility(config.Value);
                 default:
                     return new NoAbility();
             }

@@ -20,7 +20,7 @@ namespace Car.Inventory
 
         public void Init()
         {
-            exitButton.onClick.AddListener(() => Exit?.Invoke());
+            exitButton.onClick.AddListener(Hide);
         }
 
         public void Display(IReadOnlyDictionary<int, IItem> items)
@@ -39,6 +39,8 @@ namespace Car.Inventory
                 if(displayedCount == buttons.Count)
                     break;
             }
+
+            gameObject.SetActive(true);
         }
 
         public void Dispose()
@@ -68,6 +70,12 @@ namespace Car.Inventory
                 button.onClick.RemoveAllListeners();
                 button.gameObject.SetActive(false);
             }
+        }
+
+        private void Hide()
+        {
+            gameObject.SetActive(false);
+            Exit?.Invoke();
         }
     }
 }

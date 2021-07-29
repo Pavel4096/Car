@@ -2,20 +2,20 @@
 
 namespace Car.Inventory
 {
-    public class ItemsRepository : ControllerBase, IItemsRepository
+    public class ItemsRepository : ControllerBase, IRepository<int, IItem>
     {
         public IReadOnlyDictionary<int, IItem> Items => items;
 
         private Dictionary<int, IItem> items = new Dictionary<int, IItem>();
 
-        public ItemsRepository(List<ItemConfig> configs) => Populate(items, configs);
+        public ItemsRepository(List<IItemConfig> configs) => Populate(items, configs);
 
         protected override void OnDispose()
         {
             items.Clear();
         }
 
-        private void Populate(Dictionary<int, IItem> items, List<ItemConfig> configs)
+        private void Populate(Dictionary<int, IItem> items, List<IItemConfig> configs)
         {
             foreach(var config in configs)
             {
@@ -25,7 +25,7 @@ namespace Car.Inventory
             }
         }
 
-        private IItem CreateItem(ItemConfig config)
+        private IItem CreateItem(IItemConfig config)
         {
             return new Item
             {

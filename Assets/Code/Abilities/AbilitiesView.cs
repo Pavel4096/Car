@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+using System.Linq;
+
 namespace Car.Abilities
 {
     public class AbilitiesView : MonoBehaviour, IAbilitiesView
@@ -15,9 +17,11 @@ namespace Car.Abilities
         [SerializeField]
         private List<Text> texts;
 
-        public void Display(IReadOnlyList<IItem> items, IAbilityRepository abilityRepository)
+        public bool IsDisplayed { get; private set; }
+
+        public void Display(IReadOnlyList<IItem> items, IRepository<int, IAbility> abilityRepository)
         {
-            var abilities = abilityRepository.Abilities;
+            var abilities = abilityRepository.Items;
             var displayedCount = 0;
 
             Init();
@@ -33,6 +37,15 @@ namespace Car.Abilities
                         break;
                 }
             }
+
+            gameObject.SetActive(true);
+            IsDisplayed = true;
+        }
+
+        public void Hide()
+        {
+            gameObject.SetActive(false);
+            IsDisplayed = false;
         }
 
         public void Dispose()

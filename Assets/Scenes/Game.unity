@@ -333,6 +333,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   menuRoot: {fileID: 1586693375}
+  upgradeConfigs:
+  - {fileID: 11400000, guid: 47e0db96cbd6a9844aa6e078b74471af, type: 2}
+  abilityConfigs:
+  - {fileID: 11400000, guid: c495980ef9ed53f47b435babadd11d0b, type: 2}
+  - {fileID: 11400000, guid: 9f884b3a2f85dac4b82456e41bb2f948, type: 2}
 --- !u!4 &1018463199
 Transform:
   m_ObjectHideFlags: 0

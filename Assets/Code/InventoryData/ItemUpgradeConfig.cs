@@ -1,9 +1,10 @@
-﻿using UnityEngine;
+﻿using Car.Inventory;
+using UnityEngine;
 
 namespace Car
 {
     [CreateAssetMenu(fileName = "ItemUpgradeConfig", menuName = "Item upgrade config")]
-    public class ItemUpgradeConfig : ScriptableObject
+    public class ItemUpgradeConfig : ScriptableObject, IItemUpgradeConfig
     {
         [SerializeField]
         private ItemConfig item;
@@ -12,7 +13,7 @@ namespace Car
         [SerializeField]
         private float value;
 
-        public ItemConfig Item => item;
+        public IItemConfig Item => item;
         public int Id => item.Id;
         public ItemUpgradeType Type => type;
         public float Value => value;

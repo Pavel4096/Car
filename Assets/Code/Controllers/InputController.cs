@@ -7,6 +7,8 @@ namespace Car
     {
         private InputView inputView;
         private Property<float> moveProperty;
+        private Property garage;
+        private Property abilities;
         private float circleCenterX;
         private float circleCenterY;
         private float circleRadiusInPixels;
@@ -15,9 +17,14 @@ namespace Car
         private float xOffset, yOffset;
         private readonly ResourcePath inputViewPath = new ResourcePath("Input");
 
-        public InputController(Property<float> _moveProperty)
+        private readonly KeyCode garageKey = KeyCode.G;
+        private readonly KeyCode abilitiesKey = KeyCode.A;
+
+        public InputController(Property<float> _moveProperty, Property _garage, Property _abilities)
         {
             moveProperty = _moveProperty;
+            garage = _garage;
+            abilities = _abilities;
             inputView = LoadView();
             circleCenterX = inputView.CircleCenterX;
             circleCenterY = inputView.CircleCenterY;
@@ -73,6 +80,11 @@ namespace Car
             position.y = yValue*circleRadius;
             inputView.DotPosition = position;
             moveProperty.Value = -xValue;
+
+            if(Input.GetKeyDown(garageKey))
+                garage.Inform();
+            if(Input.GetKeyDown(abilitiesKey))
+                abilities.Inform();
         }
     }
 }
