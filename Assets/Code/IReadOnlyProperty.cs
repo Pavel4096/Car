@@ -2,7 +2,7 @@
 
 namespace Car
 {
-    internal interface IReadOnlyProperty<T>
+    public interface IReadOnlyProperty<T>
     {
         T Value { get; }
         void Subscribe(Action<T> method);

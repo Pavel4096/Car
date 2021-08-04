@@ -1,6 +1,6 @@
 ﻿namespace Car
 {
-    internal enum GameState
+    public enum GameState
     {
         None = 0,
         MainMenu = 1,

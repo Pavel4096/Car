@@ -44,7 +44,7 @@ namespace Car
         {
             foreach(var background in backgroundView.Backgrounds)
             {
-                background.UpdateBackground(direction);
+                background.UpdateBackground(direction*playerProfile.Car.Speed*playerProfile.Car.SpeedMultiplier);
             }
         }
 

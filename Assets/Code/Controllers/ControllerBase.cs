@@ -4,9 +4,9 @@ using UnityEngine;
 
 namespace Car
 {
-    internal abstract class ControllerBase : IDisposable
+    public abstract class ControllerBase : IControllerBase
     {
-        private List<ControllerBase> controllers = new List<ControllerBase>();
+        private List<IControllerBase> controllers = new List<IControllerBase>();
         private List<GameObject> objects = new List<GameObject>();
         private bool isDisposed;
 
@@ -27,7 +27,7 @@ namespace Car
             isDisposed = true;
         }
 
-        public void AddController(ControllerBase controller)
+        public void AddController(IControllerBase controller)
         {
             if(controller != null)
                 controllers.Add(controller);
