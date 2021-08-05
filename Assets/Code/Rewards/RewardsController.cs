@@ -8,17 +8,19 @@ namespace Rewards
         private IRewardsView _rewardsView;
         private Reward[] _rewards;
         private IUserData _userData;
+        private IAmountsInformationController _amountsInformationController;
 
         private readonly int _timeToNext;
         private readonly int _timeToReset;
 
-        public RewardsController(IRewardsView rewardsView, Reward[] rewards, IUserData userData, GameObject item, int timeToNext, int timeToReset)
+        public RewardsController(IRewardsView rewardsView, IAmountsInformationController amountsInformationController, Reward[] rewards, IUserData userData, GameObject item, int timeToNext, int timeToReset)
         {
             _rewardsView = rewardsView;
             _rewards = rewards;
             _timeToNext = timeToNext;
             _timeToReset = timeToReset;
             _userData = userData;
+            _amountsInformationController = amountsInformationController;
 
             _rewardsView.Init(rewards, item);
             _rewardsView.SetCurrent(_userData.CurrentRewardIndex);
@@ -28,11 +30,18 @@ namespace Rewards
         public void UpdateTimer()
         {
             var timeToWait = _userData.LastTimeRewardTaken + new TimeSpan(0, 0, _timeToNext) - DateTime.UtcNow;
-            var timeToWaitPercent = (float)timeToWait.TotalSeconds/_timeToNext;
 
-            if(timeToWait.TotalSeconds < 0)
+            if(timeToWait.TotalSeconds < 0 && Math.Abs(timeToWait.TotalSeconds) >= _timeToReset)
+            {
+                ResetRewards();
+            }
+            else
+            {
+                if(timeToWait.TotalSeconds < 0)
                 timeToWait = new TimeSpan(0);
-            _rewardsView.SetTimer(timeToWait, timeToWaitPercent);
+                var timeToWaitPercent = (float)timeToWait.TotalSeconds/_timeToNext;
+                _rewardsView.SetTimer(timeToWait, timeToWaitPercent);
+            }
         }
 
         public void Dispose()
@@ -47,13 +56,44 @@ namespace Rewards
 
             if(timeSinceLastReward.TotalSeconds >= _timeToNext)
             {
-                _userData.RewardTaken(currentTime);
-                _rewardsView.SetCurrent(_userData.CurrentRewardIndex);
+                ProcessRewardConfirmationResult(true, currentTime);
             }
             else
             {
                 _rewardsView.SetCurrent(_userData.CurrentRewardIndex);
             }
+        }
+
+        private void ProcessRewardConfirmationResult(bool rewardConfirmed, DateTime time)
+        {
+            if(rewardConfirmed)
+            {
+                AddReward();
+                _userData.RewardTaken(time);
+                _amountsInformationController.UpdateData();
+            }
+            _rewardsView.SetCurrent(_userData.CurrentRewardIndex);
+        }
+
+        private void AddReward()
+        {
+            var currentReward = _rewards[_userData.CurrentRewardIndex];
+
+            switch(currentReward.type)
+            {
+                case RewardType.OrangeCircle:
+                    _userData.AddOrangeCircles(currentReward.amount);
+                    break;
+                case RewardType.GreenCircle:
+                    _userData.AddGreenCircles(currentReward.amount);
+                    break;
+            }
+        }
+
+        private void ResetRewards()
+        {
+            _userData.ResetRewards(DateTime.UtcNow);
+            _rewardsView.SetCurrent(_userData.CurrentRewardIndex);
         }
     }
 }

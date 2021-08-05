@@ -39,9 +39,12 @@ namespace Rewards
         public void SetCurrent(int index)
         {
             _itemViews[currentIndex].IsCurrent = false;
-            _itemViews[index].IsCurrent = true;
-            currentIndex = index;
-            _takeRewardButton.enabled = true;
+            if(index != -1)
+            {
+                _itemViews[index].IsCurrent = true;
+                currentIndex = index;
+                _takeRewardButton.enabled = true;
+            }
         }
 
         public void SetTimer(TimeSpan time, float waitTimePercent)

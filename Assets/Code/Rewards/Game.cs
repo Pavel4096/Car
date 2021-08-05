@@ -16,19 +16,23 @@ namespace Rewards
         [SerializeField]
         private RewardsView _rewardsView;
         [SerializeField]
+        private AmountsInformationView _amountsInformationView;
+        [SerializeField]
         private int _timeToNext = 1*60;
         [SerializeField]
         private int _timeToReset = 1*60;
 
         private IUserData _userData;
         private RewardsController _rewardsController;
+        private IAmountsInformationController _amountsInformationController;
 
         private readonly string _fileName = "data";
 
         private void Start()
         {
             _userData = GetUserData();
-            _rewardsController = new RewardsController(_rewardsView, _rewards, _userData, _item, _timeToNext, _timeToReset);
+            _amountsInformationController = new AmountsInformationController(_amountsInformationView, _userData);
+            _rewardsController = new RewardsController(_rewardsView, _amountsInformationController, _rewards, _userData, _item, _timeToNext, _timeToReset);
             Application.quitting += SaveUserData;
         }
 
@@ -52,6 +56,7 @@ namespace Rewards
 
             if(userData == null)
                 userData = new UserData();
+            userData.SetMaxRewardIndex(_rewards.Length - 1);
 
             return userData;
         }
