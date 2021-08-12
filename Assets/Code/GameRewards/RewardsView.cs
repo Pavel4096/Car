@@ -17,11 +17,14 @@ namespace Car.Rewards
         private Button _takeRewardButton;
         [SerializeField]
         private Transform _itemsRoot;
+        [SerializeField]
+        private Button _exitButton;
 
         private List<IItemView> _itemViews = new List<IItemView>();
         private int currentIndex = 0;
 
         public event Action ButtonClicked;
+        public event Action ExitButtonClicked;
 
         public void Init(Reward[] rewards, GameObject item)
         {
@@ -34,6 +37,7 @@ namespace Car.Rewards
                 nextItemView.Init(reward);
             }
             _takeRewardButton.onClick.AddListener(() => ProcessButtonClick());
+            _exitButton.onClick.AddListener(() => ExitButtonClicked?.Invoke());
         }
 
         public void SetCurrent(int index)
@@ -66,6 +70,7 @@ namespace Car.Rewards
         private void OnDestroy()
         {
             _takeRewardButton.onClick.RemoveAllListeners();
+            _exitButton.onClick.RemoveAllListeners();
         }
     }
 }

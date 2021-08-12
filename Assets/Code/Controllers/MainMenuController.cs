@@ -16,6 +16,7 @@ namespace Car
             _mainMenuView = LoadView(menuRoot);
             _mainMenuView.StartButton.onClick.AddListener(StartGame);
             _mainMenuView.RewardsButton.onClick.AddListener(ShowRewards);
+            _mainMenuView.FightButton.onClick.AddListener(ShowFight);
             _mainMenuView.ExitButton.onClick.AddListener(Quit);
         }
 
@@ -23,6 +24,7 @@ namespace Car
         {
             _mainMenuView.StartButton.onClick.RemoveAllListeners();
             _mainMenuView.RewardsButton.onClick.RemoveAllListeners();
+            _mainMenuView.FightButton.onClick.RemoveAllListeners();
             _mainMenuView.ExitButton.onClick.RemoveAllListeners();
         }
 
@@ -44,6 +46,11 @@ namespace Car
         private void ShowRewards()
         {
             _playerProfile.GameState.Value = GameState.Rewards;
+        }
+
+        private void ShowFight()
+        {
+            _playerProfile.GameState.Value = GameState.Fight;
         }
 
         private void Quit()

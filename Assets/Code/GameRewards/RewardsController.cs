@@ -10,11 +10,12 @@ namespace Car.Rewards
         private Reward[] _rewards;
         private IUserData _userData;
         private IAmountsInformationController _amountsInformationController;
+        private PlayerProfile _playerProfile;
 
         private readonly int _timeToNext;
         private readonly int _timeToReset;
 
-        public RewardsController(IRewardsView rewardsView, IAmountsInformationController amountsInformationController, Reward[] rewards, IUserData userData, GameObject item, int timeToNext, int timeToReset)
+        public RewardsController(IRewardsView rewardsView, IAmountsInformationController amountsInformationController, Reward[] rewards, IUserData userData, GameObject item, int timeToNext, int timeToReset, PlayerProfile playerProfile)
         {
             _rewardsView = rewardsView;
             _rewards = rewards;
@@ -22,11 +23,13 @@ namespace Car.Rewards
             _timeToReset = timeToReset;
             _userData = userData;
             _amountsInformationController = amountsInformationController;
+            _playerProfile = playerProfile;
 
             UpdateUtility.AddGameUpdate(UpdateTimer);
             _rewardsView.Init(rewards, item);
             _rewardsView.SetCurrent(_userData.CurrentRewardIndex);
             _rewardsView.ButtonClicked += ProcessButtonClick;
+            _rewardsView.ExitButtonClicked += QuitRewards;
         }
 
         public void UpdateTimer()
@@ -48,7 +51,9 @@ namespace Car.Rewards
 
         protected override void OnDispose()
         {
+            UpdateUtility.RemoveGameUpdate(UpdateTimer);
             _rewardsView.ButtonClicked -= ProcessButtonClick;
+            _rewardsView.ExitButtonClicked -= QuitRewards;
         }
 
         private void ProcessButtonClick()
@@ -96,6 +101,11 @@ namespace Car.Rewards
         {
             _userData.ResetRewards(DateTime.UtcNow);
             _rewardsView.SetCurrent(_userData.CurrentRewardIndex);
+        }
+
+        private void QuitRewards()
+        {
+            _playerProfile.GameState.Value = GameState.MainMenu;
         }
     }
 }
