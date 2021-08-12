@@ -2,27 +2,38 @@
 
 namespace Car.Abilities
 {
-    public class AbilitiesController : ControllerBase
+    public class AbilitiesController : ControllerBase, IAbilitiesController
     {
-        private IAbilityRepository abilitiesRepository;
+        private IRepository<int, IAbility> abilitiesRepository;
         private IAbilityActivator abilityActivator;
-        private IInventoryModel inventoryModel;
+        private IInventoryController inventoryController;
         private IAbilitiesView abilitiesView;
+        private IReadOnlyProperty abilitiesOpener;
 
-        public AbilitiesController(IAbilityRepository _abilitiesRepository, IAbilityActivator _abilityActivator, IInventoryModel _inventoryModel, IAbilitiesView _abilitiesView)
+        public AbilitiesController(IRepository<int, IAbility> _abilitiesRepository, IAbilityActivator _abilityActivator, IInventoryController _inventoryController, IAbilitiesView _abilitiesView, IReadOnlyProperty _abilitiesOpener)
         {
             abilitiesRepository = _abilitiesRepository;
             abilityActivator = _abilityActivator;
-            inventoryModel = _inventoryModel;
+            inventoryController = _inventoryController;
             abilitiesView = _abilitiesView;
+            abilitiesOpener = _abilitiesOpener;
             abilitiesView.Selected += AbilitySelected;
-            abilitiesView.Display(inventoryModel.EquippedItems, abilitiesRepository);
+            //abilitiesView.Display(inventoryModel.EquippedItems, abilitiesRepository);
+            abilitiesOpener.Subscribe(ShowOrHide);
         }
 
         protected override void OnDispose()
         {
             abilitiesView.Selected -= AbilitySelected;
             abilitiesView.Dispose();
+        }
+
+        private void ShowOrHide()
+        {
+            if(abilitiesView.IsDisplayed)
+                abilitiesView.Hide();
+            else
+                abilitiesView.Display(inventoryController.EquippedItems, abilitiesRepository);
         }
 
         private void AbilitySelected(IAbility ability)

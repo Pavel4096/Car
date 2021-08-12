@@ -10,7 +10,9 @@ namespace Car
         private Property<GameState> gameState;
         private GameState previousGameState;
         private Property<float> moveProperty;
-        private ControllerBase currentController;
+        private Property garageProperty;
+        private Property abilitiesProperty;
+        private RootController currentController;
 
         private const float carSpeed = 5.0f;
 
@@ -19,6 +21,8 @@ namespace Car
             game = _game;
             gameState = new Property<GameState>();
             moveProperty = new Property<float>();
+            garageProperty = new Property();
+            abilitiesProperty = new Property();
             playerProfile = new PlayerProfile(new Car(carSpeed), gameState, new AnalyticsUtility(), new AdsUtility());
             gameState.Subscribe(StateChanged);
 
@@ -44,9 +48,11 @@ namespace Car
                     currentController.AddController(new MainMenuController(playerProfile, game.menuRoot));
                     break;
                 case GameState.Game:
-                    currentController.AddController(new CarController(playerProfile));
+                    var carController = new CarController(playerProfile);
+                    currentController.AddController(carController);
                     currentController.AddController(new BackgroundController(playerProfile, moveProperty));
-                    currentController.AddController(new InputController(moveProperty));
+                    currentController.AddController(new InputController(moveProperty, garageProperty, abilitiesProperty));
+                    currentController.CreateGameControllers(game.upgradeConfigs, game.abilityConfigs, carController,  game.menuRoot, garageProperty, abilitiesProperty, playerProfile.Car);
                     break;
             }
         }

@@ -11,20 +11,22 @@ namespace Car.Inventory
 
         private IInventoryModel inventoryModel;
         private IInventoryView inventoryView;
-        private IItemsRepository itemsRepository;
+        private IRepository<int, IItem> itemsRepository;
 
         private readonly ResourcePath inventoryViewPath = new ResourcePath("InventoryButtons");
 
-        public InventoryController(IInventoryModel _inventoryModel, IItemsRepository _itemsRepository, Transform uiroot)
+        public InventoryController(IInventoryModel _inventoryModel, IInventoryView _inventoryView, IRepository<int, IItem> _itemsRepository, Transform uiroot)
         {
             inventoryModel = _inventoryModel;
-            inventoryView = LoadView(uiroot);
+            inventoryView = _inventoryView;
             itemsRepository = _itemsRepository;
             inventoryView.Init();
             inventoryView.Selected += ItemSelected;
             inventoryView.Deselected += ItemDeselected;
             inventoryView.Exit += OnExit;
         }
+
+        public IReadOnlyList<IItem> EquippedItems => inventoryModel.EquippedItems;
 
         public void Show()
         {
@@ -37,15 +39,6 @@ namespace Car.Inventory
             inventoryView.Deselected -= ItemDeselected;
             inventoryView.Exit -= OnExit;
             inventoryView.Dispose();
-        }
-
-        private IInventoryView LoadView(Transform uiroot)
-        {
-            var inventoryViewObject = UnityEngine.Object.Instantiate(ResourceLoader.Load(inventoryViewPath), uiroot, false);
-
-            AddObject(inventoryViewObject);
-
-            return inventoryViewObject.GetComponent<IInventoryView>();
         }
 
         private void ItemSelected(IItem item)

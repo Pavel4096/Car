@@ -27,4 +27,24 @@ namespace Car
             handlers -= handler;
         }
     }
+
+    public class Property : IReadOnlyProperty
+    {
+        private Action handlers;
+
+        public void Subscribe(Action handler)
+        {
+            handlers += handler;
+        }
+
+        public void Unsubscribe(Action handler)
+        {
+            handlers += handler;
+        }
+
+        public void Inform()
+        {
+            handlers?.Invoke();
+        }
+    }
 }

@@ -1,9 +1,10 @@
-﻿using UnityEngine;
+﻿using Car.Inventory;
+using UnityEngine;
 
 namespace Car
 {
     [CreateAssetMenu(fileName = "ItemConfig", menuName = "Item config")]
-    public class ItemConfig : ScriptableObject
+    public class ItemConfig : ScriptableObject, IItemConfig
     {
         [SerializeField]
         private int id;

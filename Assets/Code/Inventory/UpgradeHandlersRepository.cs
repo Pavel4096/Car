@@ -2,13 +2,13 @@
 
 namespace Car.Inventory
 {
-    public class UpgradeHandlersRepository : ControllerBase
+    public class UpgradeHandlersRepository : ControllerBase, IRepository<int, IUpgradeCarHandler>
     {
-        public IReadOnlyDictionary<int, IUpgradeCarHandler> UpgradeHandlers => upgradeHandlers;
+        public IReadOnlyDictionary<int, IUpgradeCarHandler> Items => upgradeHandlers;
 
         private Dictionary<int, IUpgradeCarHandler> upgradeHandlers = new Dictionary<int, IUpgradeCarHandler>();
 
-        public UpgradeHandlersRepository(List<ItemUpgradeConfig> configs)
+        public UpgradeHandlersRepository(IItemUpgradeConfig[] configs)
         {
             PopulateItems(upgradeHandlers, configs);
         }
@@ -18,7 +18,7 @@ namespace Car.Inventory
             upgradeHandlers.Clear();
         }
 
-        private void PopulateItems(Dictionary<int, IUpgradeCarHandler> handlers, List<ItemUpgradeConfig> configs)
+        private void PopulateItems(Dictionary<int, IUpgradeCarHandler> handlers, IItemUpgradeConfig[] configs)
         {
             foreach(var config in configs)
             {
@@ -29,7 +29,7 @@ namespace Car.Inventory
             }
         }
 
-        private IUpgradeCarHandler CreateHandler(ItemUpgradeConfig config)
+        private IUpgradeCarHandler CreateHandler(IItemUpgradeConfig config)
         {
             switch(config.Type)
             {
