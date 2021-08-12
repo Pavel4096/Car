@@ -5,21 +5,25 @@ namespace Car
 {
     internal sealed class MainMenuController : ControllerBase
     {
-        private MainMenuView mainMenuView;
-        private PlayerProfile playerProfile;
+        private MainMenuView _mainMenuView;
+        private PlayerProfile _playerProfile;
 
         private readonly ResourcePath mainMenuViewPath = new ResourcePath("MainMenu");
 
-        public MainMenuController(PlayerProfile _playerProfile, Transform menuRoot)
+        public MainMenuController(PlayerProfile playerProfile, Transform menuRoot)
         {
-            playerProfile = _playerProfile;
-            mainMenuView = LoadView(menuRoot);
-            mainMenuView.StartButton.onClick.AddListener(StartGame);
+            _playerProfile = playerProfile;
+            _mainMenuView = LoadView(menuRoot);
+            _mainMenuView.StartButton.onClick.AddListener(StartGame);
+            _mainMenuView.RewardsButton.onClick.AddListener(ShowRewards);
+            _mainMenuView.ExitButton.onClick.AddListener(Quit);
         }
 
         protected override void OnDispose()
         {
-            mainMenuView.StartButton.onClick.RemoveAllListeners();
+            _mainMenuView.StartButton.onClick.RemoveAllListeners();
+            _mainMenuView.RewardsButton.onClick.RemoveAllListeners();
+            _mainMenuView.ExitButton.onClick.RemoveAllListeners();
         }
 
         private MainMenuView LoadView(Transform menuRoot)
@@ -27,14 +31,24 @@ namespace Car
             var mainMenuViewObject = Object.Instantiate(ResourceLoader.Load(mainMenuViewPath), menuRoot, false);
 
             AddObject(mainMenuViewObject);
-            playerProfile.AnalyticsUtility.MenuEntered("MainMenu");
+            _playerProfile.AnalyticsUtility.MenuEntered("MainMenu");
 
             return mainMenuViewObject.GetComponent<MainMenuView>();
         }
 
         private void StartGame()
         {
-            playerProfile.AdsUtility.ShowAd(() => playerProfile.GameState.Value = GameState.Game);
+            _playerProfile.AdsUtility.ShowAd(() => _playerProfile.GameState.Value = GameState.Game);
+        }
+
+        private void ShowRewards()
+        {
+            _playerProfile.GameState.Value = GameState.Rewards;
+        }
+
+        private void Quit()
+        {
+            Application.Quit();
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using TMPro;
 
-namespace Rewards
+namespace Car.Rewards
 {
     public interface IAmountsInformationView
     {

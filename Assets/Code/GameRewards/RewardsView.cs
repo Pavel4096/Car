@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-namespace Rewards
+namespace Car.Rewards
 {
     [Serializable]
     public class RewardsView : MonoBehaviour, IRewardsView

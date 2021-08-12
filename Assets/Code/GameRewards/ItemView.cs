@@ -2,7 +2,7 @@
 using UnityEngine.UI;
 using TMPro;
 
-namespace Rewards
+namespace Car.Rewards
 {
     public class ItemView : MonoBehaviour, IItemView
     {

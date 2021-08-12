@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Rewards
+namespace Car.Rewards
 {
     [Serializable]
     public class UserData : IUserData

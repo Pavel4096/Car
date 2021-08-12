@@ -1,4 +1,4 @@
-﻿namespace Rewards
+﻿namespace Car.Rewards
 {
     public enum RewardType
     {

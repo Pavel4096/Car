@@ -20,6 +20,15 @@ namespace Car
             var abilitiesController = CreateAbilitiesController(abilityConfigs, abilityActivator, inventoryController, uiroot, abilitiesOpener);
         }
 
+        public T LoadAndAdd<T>(ResourcePath path, Transform uiroot)
+        {
+            var loadedObject = ResourceLoader.Load(path);
+            var newObject = UnityEngine.Object.Instantiate(loadedObject, uiroot, false);
+            AddObject(newObject);
+
+            return newObject.GetComponent<T>();
+        }
+
         private IInventoryController CreateInventoryController(IItemUpgradeConfig[] configs, Transform uiroot)
         {
             var inventoryView = LoadAndAdd<IInventoryView>(inventoryViewPath, uiroot);
@@ -46,15 +55,6 @@ namespace Car
             AddController(abilitiesController);
 
             return abilitiesController;
-        }
-
-        private T LoadAndAdd<T>(ResourcePath path, Transform uiroot)
-        {
-            var loadedObject = ResourceLoader.Load(path);
-            var newObject = UnityEngine.Object.Instantiate(loadedObject, uiroot, false);
-            AddObject(newObject);
-
-            return newObject.GetComponent<T>();
         }
 
         private List<IItemConfig> GetItemConfigs(IItemUpgradeConfig[] configs)

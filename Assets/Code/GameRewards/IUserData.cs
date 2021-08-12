@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Rewards
+namespace Car.Rewards
 {
     public interface IUserData
     {

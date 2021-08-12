@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Rewards
+namespace Car.Rewards
 {
     public interface IRewardsView
     {

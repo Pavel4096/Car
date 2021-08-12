@@ -1,6 +1,6 @@
-﻿namespace Rewards
+﻿namespace Car.Rewards
 {
-    public class AmountsInformationController : IAmountsInformationController
+    public class AmountsInformationController : ControllerBase, IAmountsInformationController
     {
         private IAmountsInformationView _amountsInformationView;
         private IUserData _userData;

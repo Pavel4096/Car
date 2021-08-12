@@ -1,4 +1,5 @@
 ﻿using Car.Utilities;
+using Car.Rewards;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -10,12 +11,24 @@ namespace Car
     public class Game : MonoBehaviour
     {
         public Transform menuRoot;
-        //public List<ItemUpgradeConfig> upgradeConfigs;
         public ItemUpgradeConfig[] upgradeConfigs;
         public AbilityConfig[] abilityConfigs;
-        //public List<AbilityConfig> abilityConfigs;
 
         public ItemConfig[] configs;
+
+        [SerializeField]
+        private GameObject _item;
+        [SerializeField]
+        private Reward[] _rewards;
+        [SerializeField]
+        private int _timeToNext = 1*60;
+        [SerializeField]
+        private int _timeToReset = 1*60;
+
+        public GameObject Item => _item;
+        public Reward[] Rewards => _rewards;
+        public int TimeToNext => _timeToNext;
+        public int TimeToReset => _timeToReset;
         
         private GameController gameController;
 

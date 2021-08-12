@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class Game : MonoBehaviour, IPlayerView, IEnemyView
+public class Game2 : MonoBehaviour, IPlayerView, IEnemyView
 {
     [SerializeField]
     private TMP_Text _playerHealth;

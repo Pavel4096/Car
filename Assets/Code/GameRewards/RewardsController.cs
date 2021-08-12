@@ -1,9 +1,10 @@
-﻿using System;
+﻿using Car.Utilities;
+using System;
 using UnityEngine;
 
-namespace Rewards
+namespace Car.Rewards
 {
-    public class RewardsController : IDisposable
+    public class RewardsController : ControllerBase, IDisposable
     {
         private IRewardsView _rewardsView;
         private Reward[] _rewards;
@@ -22,6 +23,7 @@ namespace Rewards
             _userData = userData;
             _amountsInformationController = amountsInformationController;
 
+            UpdateUtility.AddGameUpdate(UpdateTimer);
             _rewardsView.Init(rewards, item);
             _rewardsView.SetCurrent(_userData.CurrentRewardIndex);
             _rewardsView.ButtonClicked += ProcessButtonClick;
@@ -44,7 +46,7 @@ namespace Rewards
             }
         }
 
-        public void Dispose()
+        protected override void OnDispose()
         {
             _rewardsView.ButtonClicked -= ProcessButtonClick;
         }
