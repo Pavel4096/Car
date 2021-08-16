@@ -1,10 +1,10 @@
-﻿using Car.Utilities;
-using Car.Rewards;
+﻿using System.Collections;
 using System.Collections.Generic;
+using Car.Utilities;
+using Car.Rewards;
 using UnityEngine;
 using UnityEngine.Networking;
-using System;
-
+using UnityEngine.AddressableAssets;
 
 using Car.Inventory;
 
@@ -17,6 +17,10 @@ namespace Car
         public AbilityConfig[] abilityConfigs;
 
         public ItemConfig[] configs;
+
+        public bool loadedViews = false;
+        public GameObject view1;
+        public GameObject view2;
 
         [SerializeField]
         private GameObject _item;
@@ -34,6 +38,8 @@ namespace Car
         
         private GameController gameController;
 
+        private Coroutine loadingCoroutine;
+
         private void Awake()
         {
             gameController = new GameController(this);
@@ -44,12 +50,12 @@ namespace Car
             UpdateUtility.GameUpdate();
         }
 
-        private void StartLoadViews(string name1, string name2, ref GameObject view1, ref GameObject view2, GameState newGameState, PlayerProfile playerProfile)
+        public void StartLoadViews(string name1, string name2, GameState newGameState, PlayerProfile playerProfile)
         {
-            StartCoroutine(name1, name2, ref view1, ref view2, newGameState, playerProfile);
+            loadingCoroutine = StartCoroutine(LoadViews(name1, name2, newGameState, playerProfile));
         }
 
-        private IEnumerator LoadViews(string name1, string name2, ref GameObject view1, ref GameObject view2, GameState newGameState, PlayerProfile playerProfile)
+        private IEnumerator LoadViews(string name1, string name2, GameState newGameState, PlayerProfile playerProfile)
         {
             var handle = Addressables.LoadAssetAsync<GameObject>(name1);
 
