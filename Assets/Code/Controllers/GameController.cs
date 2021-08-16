@@ -55,7 +55,8 @@ namespace Car
             if(gameState == previousGameState)
                 return;
 
-            DeleteObjects();
+            if(!_game.loadedViews)
+                DeleteObjects();
 
             if(gameState != GameState.Rewards)
             {
@@ -94,12 +95,13 @@ namespace Car
                     ShowFight();
                     break;
             }
+            _game.loadedViews = false;
         }
 
         private void ShowRewards()
         {
-            var amountsInformationController = new AmountsInformationController(_game.view1.GetComponent<IAmountsInformationView>(), _userData);
-            var rewardsController = new RewardsController(_game.view2.GetComponent<IRewardsView>(), amountsInformationController, _game.Rewards, _userData, _game.Item, _game.TimeToNext, _game.TimeToReset, _playerProfile);
+            var amountsInformationController = new AmountsInformationController(assetHandles[0].assetObject.GetComponent<IAmountsInformationView>(), _userData);
+            var rewardsController = new RewardsController(assetHandles[1].assetObject.GetComponent<IRewardsView>(), amountsInformationController, _game.Rewards, _userData, _game.Item, _game.TimeToNext, _game.TimeToReset, _playerProfile);
 
             _currentController.AddController(amountsInformationController);
             _currentController.AddController(rewardsController);
@@ -148,7 +150,8 @@ namespace Car
         {
             foreach(var assetHandle in assetHandles)
             {
-                Addressables.Release<GameObject>(assetHandle.assetObject);
+                if(assetHandle.assetObject != null)
+                    Addressables.Release<GameObject>(assetHandle.assetObject);
             }
             assetHandles.Clear();
         }

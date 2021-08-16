@@ -65,7 +65,7 @@ namespace Car
             {
                 handle = Addressables.LoadAssetAsync<GameObject>(assetHandle.name);
                 yield return handle;
-                handle = Addressables.Instantiate(handle.Result, menuRoot, false);
+                handle = Addressables.Instantiate(assetHandle.name, menuRoot, false);
                 yield return handle;
                 assetHandle.assetObject = handle.Result;
             }
