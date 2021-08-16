@@ -21,7 +21,7 @@ namespace Car
         private PlayerProfile _playerProfile;
         private IUserData _userData;
 
-        private List<AssetHandle> assetHandles = new List<AssetHandle>();
+        private Dictionary<string, AssetHandle> assetHandles = new Dictionary<string, AssetHandle>();
 
         private const float carSpeed = 5.0f;
         private const string rewardsFileName = "data";
@@ -78,10 +78,10 @@ namespace Car
                 case GameState.Rewards:
                     if(!_game.loadedViews)
                     {
-                        assetHandles.Add(new AssetHandle{
+                        assetHandles.Add("rewards", new AssetHandle{
                             name = "RewardsView"
                         });
-                        assetHandles.Add(new AssetHandle{
+                        assetHandles.Add("amountsInformation", new AssetHandle{
                             name = "AmountsInformationView"
                         });
                         _game.StartLoadViews(assetHandles, gameState, _playerProfile);
@@ -100,8 +100,8 @@ namespace Car
 
         private void ShowRewards()
         {
-            var amountsInformationController = new AmountsInformationController(assetHandles[0].assetObject.GetComponent<IAmountsInformationView>(), _userData);
-            var rewardsController = new RewardsController(assetHandles[1].assetObject.GetComponent<IRewardsView>(), amountsInformationController, _game.Rewards, _userData, _game.Item, _game.TimeToNext, _game.TimeToReset, _playerProfile);
+            var amountsInformationController = new AmountsInformationController(assetHandles["amountsInformation"].assetObject.GetComponent<IAmountsInformationView>(), _userData);
+            var rewardsController = new RewardsController(assetHandles["rewards"].assetObject.GetComponent<IRewardsView>(), amountsInformationController, _game.Rewards, _userData, _game.Item, _game.TimeToNext, _game.TimeToReset, _playerProfile);
 
             _currentController.AddController(amountsInformationController);
             _currentController.AddController(rewardsController);
@@ -148,7 +148,7 @@ namespace Car
 
         private void DeleteObjects()
         {
-            foreach(var assetHandle in assetHandles)
+            foreach(var assetHandle in assetHandles.Values)
             {
                 if(assetHandle.assetObject != null)
                     Addressables.Release<GameObject>(assetHandle.assetObject);

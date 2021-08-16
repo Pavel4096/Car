@@ -52,22 +52,31 @@ namespace Car
             UpdateUtility.GameUpdate();
         }
 
-        public void StartLoadViews(List<AssetHandle> assetHandles, GameState newGameState, PlayerProfile playerProfile)
+        public void StartLoadViews(Dictionary<string, AssetHandle> assetHandles, GameState newGameState, PlayerProfile playerProfile)
         {
             loadedViews = false;
             loadingCoroutine = StartCoroutine(LoadViews(assetHandles, newGameState, playerProfile));
         }
 
-        private IEnumerator LoadViews(List<AssetHandle> assetHandles, GameState newGameState, PlayerProfile playerProfile)
+        private IEnumerator LoadViews(Dictionary<string, AssetHandle> assetHandles, GameState newGameState, PlayerProfile playerProfile)
         {
             AsyncOperationHandle<GameObject> handle;
 
-            foreach(var assetHandle in assetHandles)
+            foreach(var assetHandleEntry in assetHandles)
             {
+                var assetHandle = assetHandleEntry.Value;
                 handle = Addressables.LoadAssetAsync<GameObject>(assetHandle.name);
                 yield return handle;
+                if(handle.Status != AsyncOperationStatus.Succeeded)
+                {
+                    Debug.Log($"Failed to load asset '{assetHandle.name}'");
+                }
                 handle = Addressables.InstantiateAsync(assetHandle.name, menuRoot, false);
                 yield return handle;
+                if(handle.Status != AsyncOperationStatus.Succeeded)
+                {
+                    Debug.Log($"Failed to create object from asset '{assetHandle.name}'");
+                }
                 assetHandle.assetObject = handle.Result;
             }
 
@@ -104,4 +113,42 @@ namespace Car
             Debug.Log($"Loaded image in: {(endTime - startTime).TotalMilliseconds} milliseconds.");
         }
     }
+/*
+LZ4 - Размер файла: 1.37 МиБ - загрузка на диск
+    Время загрузки AssetBundle: 800 миллисекунд, 222, 800, 206, 137
+    Время загрузки изображения: 50 миллисекунд, 34, 41, 44, 33
+
+LZMA - Размер файла: 705 КиБ - загрузка на диск
+    Время загрузки AssetBundle: 756, 796, 840, 850, 813
+    Время загрузки изображения: 63, 38, 46, 41, 40
+
+LZMA - Размер файла: 705 КиБ - загрузка в оперативную память
+    Время загрузки AssetBundle: 876, 210, 210, 227, 270
+    Время загрузки изображения: 32, 25, 36, 32, 56
+
+Несжатый - Размер файла: 32 МиБ - загрузка на диск
+    Время загрузки AssetBundle: 801, 821, 881, 853, 824    Повторная загрузка с диска: 52, 55, 61, 67, 64
+    Время загрузки изображения: 37, 54, 37, 39, 46                                     41, 43, 41, 39, 49
+
+Несжатый - Размер файла: 32 МиБ - загрузка в оперативную память
+    Время загрузки AssetBundle: 249, 288, 251, 235, 234
+    Время загрузки изображения: 36, 33, 39, 41, 41
+
+
+
+До этого места, при записи на диск исользовалось сжатие.
+Запись на диск без сжатия:
+
+LZMA - Размер файла: 705 КиБ - загрузка на диск
+    Время загрузки AssetBundle: 929, 782, 802, 788, 847
+    Время загрузки изображения: 31, 34, 43, 41, 42
+
+
+
+Разница не очень заметна. Скорее всего, на более сложных данных - будет заметнее.
+При сохранении на диск без сжатия - немного более быстрая загрузка. Так же немного быстрее загружается из оперативной памяти.
+Но хранить много всего в оперативной памяти - не хватит памяти. На диске со сжатием загрузка не намного дольше, а места занимает меньше.
+Но некоторые данные могут плохо сжиматься.
+Так же, разница в размере файла будет заметнее при низкой скорости соединения.
+*/
 }
