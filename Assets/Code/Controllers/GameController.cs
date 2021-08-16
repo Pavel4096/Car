@@ -1,9 +1,11 @@
-﻿using Car.Utilities;
-using Car.Rewards;
-using Car.Fight;
+﻿using System.Collections.Generic;
 using System.Xml.Serialization;
 using System.IO;
+using Car.Utilities;
+using Car.Rewards;
+using Car.Fight;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 
 namespace Car
 {
@@ -18,6 +20,8 @@ namespace Car
         private RootController _currentController;
         private PlayerProfile _playerProfile;
         private IUserData _userData;
+
+        private List<AssetHandle> assetHandles = new List<AssetHandle>();
 
         private const float carSpeed = 5.0f;
         private const string rewardsFileName = "data";
@@ -51,8 +55,13 @@ namespace Car
             if(gameState == previousGameState)
                 return;
 
-            _currentController?.Dispose();
-            _currentController = new RootController();
+            DeleteObjects();
+
+            if(gameState != GameState.Rewards)
+            {
+                _currentController?.Dispose();
+                _currentController = new RootController();
+            }
             switch(gameState)
             {
                 case GameState.MainMenu:
@@ -67,7 +76,18 @@ namespace Car
                     break;
                 case GameState.Rewards:
                     if(!_game.loadedViews)
-                        _game.StartLoadViews("RewardsView", "AmountsInformationView", gameState, _playerProfile);
+                    {
+                        assetHandles.Add(new AssetHandle{
+                            name = "RewardsView"
+                        });
+                        assetHandles.Add(new AssetHandle{
+                            name = "AmountsInformationView"
+                        });
+                        _game.StartLoadViews(assetHandles, gameState, _playerProfile);
+                        return;
+                    }
+                    _currentController?.Dispose();
+                    _currentController = new RootController();
                     ShowRewards();
                     break;
                 case GameState.Fight:
@@ -122,6 +142,15 @@ namespace Car
                 var xmlSerializer = new XmlSerializer(typeof(UserData));
                 xmlSerializer.Serialize(outputStream, _userData);
             }
+        }
+
+        private void DeleteObjects()
+        {
+            foreach(var assetHandle in assetHandles)
+            {
+                Addressables.Release<GameObject>(assetHandle.assetObject);
+            }
+            assetHandles.Clear();
         }
     }
 }

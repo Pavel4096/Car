@@ -5,6 +5,7 @@ using Car.Rewards;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
 
 using Car.Inventory;
 
@@ -50,26 +51,30 @@ namespace Car
             UpdateUtility.GameUpdate();
         }
 
-        public void StartLoadViews(string name1, string name2, GameState newGameState, PlayerProfile playerProfile)
+        public void StartLoadViews(List<AssetHandle> assetHandles, GameState newGameState, PlayerProfile playerProfile)
         {
-            loadingCoroutine = StartCoroutine(LoadViews(name1, name2, newGameState, playerProfile));
+            loadedViews = false;
+            loadingCoroutine = StartCoroutine(LoadViews(assetHandles, newGameState, playerProfile));
         }
 
-        private IEnumerator LoadViews(string name1, string name2, GameState newGameState, PlayerProfile playerProfile)
+        private IEnumerator LoadViews(List<AssetHandle> assetHandles, GameState newGameState, PlayerProfile playerProfile)
         {
-            var handle = Addressables.LoadAssetAsync<GameObject>(name1);
+            AsyncOperationHandle<GameObject> handle;
 
-            yield return handle;
-            handle = Addressables.Instantiate(handle.Result, menuRoot, false);
-            yield return handle;
-            view1 = handle.Result;
-            handle = Addressables.LoadAssetAsync<GameObject>(name2);
-            yield return handle;
-            handle = Addressables.Instantiate(handle.Result, menuRoot, false);
-            yield return handle;
-            view2 = handle.Result;
+            foreach(var assetHandle in assetHandles)
+            {
+                handle = Addressables.LoadAssetAsync<GameObject>(assetHandle.name);
+                yield return handle;
+                handle = Addressables.Instantiate(handle.Result, menuRoot, false);
+                yield return handle;
+                assetHandle.assetObject = handle.Result;
+            }
 
+            loadedViews = true;
             playerProfile.GameState.Value = newGameState;
+            if(loadingCoroutine != null)
+                StopCoroutine(loadingCoroutine);
+            loadingCoroutine = null;
         }
     }
 }

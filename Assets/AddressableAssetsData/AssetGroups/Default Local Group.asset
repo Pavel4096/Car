@@ -18,13 +18,19 @@ MonoBehaviour:
   m_GUID: e0fa16ad06a1cdd48b802ff52cc4278a
   m_SerializeEntries:
   - m_GUID: 1f42c9917cddbb04e9a6c382a7b3e631
-    m_Address: Assets/Prefabs/Rewards.prefab
+    m_Address: RewardsView
     m_ReadOnly: 0
     m_SerializedLabels: []
     m_MainAsset: {fileID: 6219012332377775876, guid: 1f42c9917cddbb04e9a6c382a7b3e631,
       type: 3}
     m_TargetAsset: {fileID: 6219012332377775876, guid: 1f42c9917cddbb04e9a6c382a7b3e631,
       type: 3}
+  - m_GUID: b7d4a87a392f5ce4db925b79ebf7c5da
+    m_Address: AmountsInformationView
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    m_MainAsset: {fileID: 0}
+    m_TargetAsset: {fileID: 0}
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 04a396aeb80da7f429f29a97b9895967, type: 2}
   m_SchemaSet:
