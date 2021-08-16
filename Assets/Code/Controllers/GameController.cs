@@ -4,6 +4,8 @@ using Car.Fight;
 using System.Xml.Serialization;
 using System.IO;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
 
 namespace Car
 {
@@ -18,6 +20,9 @@ namespace Car
         private RootController _currentController;
         private PlayerProfile _playerProfile;
         private IUserData _userData;
+
+        private GameObject _rewardsView = null;
+        private GameObject _amountsInformationView = null;
 
         private const float carSpeed = 5.0f;
         private const string rewardsFileName = "data";
@@ -66,6 +71,8 @@ namespace Car
                     _currentController.CreateGameControllers(_game.upgradeConfigs, _game.abilityConfigs, carController,  _game.menuRoot, garageProperty, abilitiesProperty, _playerProfile.Car);
                     break;
                 case GameState.Rewards:
+                    if(_rewardsView == null)
+                        _game.StartLoadViews("RewardsView", "AmountsInformationView", ref _rewardsView, ref _amountsInformationView, gameState);
                     ShowRewards();
                     break;
                 case GameState.Fight:
@@ -76,10 +83,8 @@ namespace Car
 
         private void ShowRewards()
         {
-            var rewardsView = _currentController.LoadAndAdd<IRewardsView>(rewards, _game.menuRoot);
-            var amountsInformationView = _currentController.LoadAndAdd<IAmountsInformationView>(amountsInformation, _game.menuRoot);
-            var amountsInformationController = new AmountsInformationController(amountsInformationView, _userData);
-            var rewardsController = new RewardsController(rewardsView, amountsInformationController, _game.Rewards, _userData, _game.Item, _game.TimeToNext, _game.TimeToReset, _playerProfile);
+            var amountsInformationController = new AmountsInformationController(_amountsInformationView.GetComponent<IAmountsInformationView>(), _userData);
+            var rewardsController = new RewardsController(_rewardsView.GetComponent<IRewardsView>(), amountsInformationController, _game.Rewards, _userData, _game.Item, _game.TimeToNext, _game.TimeToReset, _playerProfile);
 
             _currentController.AddController(amountsInformationController);
             _currentController.AddController(rewardsController);
@@ -123,4 +128,5 @@ namespace Car
                 xmlSerializer.Serialize(outputStream, _userData);
             }
         }
+    }
 }
