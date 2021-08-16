@@ -123,5 +123,4 @@ namespace Car
                 xmlSerializer.Serialize(outputStream, _userData);
             }
         }
-    }
 }
