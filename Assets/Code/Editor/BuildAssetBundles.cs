@@ -11,6 +11,6 @@ public class BuildAssetBundles
         if(!Directory.Exists(assetbundlesfolder))
             Directory.CreateDirectory(assetbundlesfolder);
 
-        BuildPipeline.BuildAssetBundles(assetbundlesfolder, BuildAssetBundleOptions.ChunkBasedCompression, BuildTarget.Android);
+        BuildPipeline.BuildAssetBundles(assetbundlesfolder, BuildAssetBundleOptions.None, BuildTarget.StandaloneWindows64);
     }
 }

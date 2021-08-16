@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Car.Utilities;
 using Car.Rewards;
@@ -20,8 +21,6 @@ namespace Car
         public ItemConfig[] configs;
 
         public bool loadedViews = false;
-        public GameObject view1;
-        public GameObject view2;
 
         [SerializeField]
         private GameObject _item;
@@ -40,10 +39,12 @@ namespace Car
         private GameController gameController;
 
         private Coroutine loadingCoroutine;
+        private AssetBundle assetBundle;
 
         private void Awake()
         {
             gameController = new GameController(this);
+            //StartCoroutine(LoadAssetBundle("http://localhost:8080/test"));
         }
 
         private void Update()
@@ -65,7 +66,7 @@ namespace Car
             {
                 handle = Addressables.LoadAssetAsync<GameObject>(assetHandle.name);
                 yield return handle;
-                handle = Addressables.Instantiate(assetHandle.name, menuRoot, false);
+                handle = Addressables.InstantiateAsync(assetHandle.name, menuRoot, false);
                 yield return handle;
                 assetHandle.assetObject = handle.Result;
             }
@@ -75,6 +76,32 @@ namespace Car
             if(loadingCoroutine != null)
                 StopCoroutine(loadingCoroutine);
             loadingCoroutine = null;
+        }
+
+        private IEnumerator LoadAssetBundle(string name)
+        {
+            var startTime = DateTime.Now;
+            var request = UnityWebRequestAssetBundle.GetAssetBundle(name, 46, 0);
+            //var request = UnityWebRequestAssetBundle.GetAssetBundle(name);
+            yield return request.SendWebRequest();
+
+            if(request.isDone && request.error == null)
+            {
+                Debug.Log(request.downloadedBytes + " bytes.");
+                assetBundle = DownloadHandlerAssetBundle.GetContent(request);
+            }
+            else
+                Debug.Log($"Error while loading asset bundle {name}.");
+
+            var endTime = DateTime.Now;
+            Debug.Log($"Loaded AssetBundle in: {(endTime - startTime).TotalMilliseconds} milliseconds.");
+            
+            startTime = endTime;
+            var loadedObject = assetBundle.LoadAsset("assets/textures/image2.png");
+            if(loadedObject == null)
+                Debug.Log("Failed to load image.");
+            endTime = DateTime.Now;
+            Debug.Log($"Loaded image in: {(endTime - startTime).TotalMilliseconds} milliseconds.");
         }
     }
 }

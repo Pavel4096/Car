@@ -67,6 +67,8 @@ namespace Car
             return gameIOSID;
 #elif UNITY_EDITOR
             return gameAndroidID;
+#else
+            return gameAndroidID;
 #endif
         }
 
@@ -77,6 +79,8 @@ namespace Car
 #elif UNITY_IOS
             return adUnitIOSInterstitial;
 #elif UNITY_EDITOR
+            return adUnitAndroidInterstitial;
+#else
             return adUnitAndroidInterstitial;
 #endif
         }
