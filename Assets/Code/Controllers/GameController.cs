@@ -1,9 +1,11 @@
-﻿using Car.Utilities;
-using Car.Rewards;
-using Car.Fight;
+﻿using System.Collections.Generic;
 using System.Xml.Serialization;
 using System.IO;
+using Car.Utilities;
+using Car.Rewards;
+using Car.Fight;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 
 namespace Car
 {
@@ -18,6 +20,8 @@ namespace Car
         private RootController _currentController;
         private PlayerProfile _playerProfile;
         private IUserData _userData;
+
+        private Dictionary<string, AssetHandle> assetHandles = new Dictionary<string, AssetHandle>();
 
         private const float carSpeed = 5.0f;
         private const string rewardsFileName = "data";
@@ -51,8 +55,14 @@ namespace Car
             if(gameState == previousGameState)
                 return;
 
-            _currentController?.Dispose();
-            _currentController = new RootController();
+            if(!_game.loadedViews)
+                DeleteObjects();
+
+            if(gameState != GameState.Rewards)
+            {
+                _currentController?.Dispose();
+                _currentController = new RootController();
+            }
             switch(gameState)
             {
                 case GameState.MainMenu:
@@ -66,20 +76,32 @@ namespace Car
                     _currentController.CreateGameControllers(_game.upgradeConfigs, _game.abilityConfigs, carController,  _game.menuRoot, garageProperty, abilitiesProperty, _playerProfile.Car);
                     break;
                 case GameState.Rewards:
+                    if(!_game.loadedViews)
+                    {
+                        assetHandles.Add("rewards", new AssetHandle{
+                            name = "RewardsView"
+                        });
+                        assetHandles.Add("amountsInformation", new AssetHandle{
+                            name = "AmountsInformationView"
+                        });
+                        _game.StartLoadViews(assetHandles, gameState, _playerProfile);
+                        return;
+                    }
+                    _currentController?.Dispose();
+                    _currentController = new RootController();
                     ShowRewards();
                     break;
                 case GameState.Fight:
                     ShowFight();
                     break;
             }
+            _game.loadedViews = false;
         }
 
         private void ShowRewards()
         {
-            var rewardsView = _currentController.LoadAndAdd<IRewardsView>(rewards, _game.menuRoot);
-            var amountsInformationView = _currentController.LoadAndAdd<IAmountsInformationView>(amountsInformation, _game.menuRoot);
-            var amountsInformationController = new AmountsInformationController(amountsInformationView, _userData);
-            var rewardsController = new RewardsController(rewardsView, amountsInformationController, _game.Rewards, _userData, _game.Item, _game.TimeToNext, _game.TimeToReset, _playerProfile);
+            var amountsInformationController = new AmountsInformationController(assetHandles["amountsInformation"].assetObject.GetComponent<IAmountsInformationView>(), _userData);
+            var rewardsController = new RewardsController(assetHandles["rewards"].assetObject.GetComponent<IRewardsView>(), amountsInformationController, _game.Rewards, _userData, _game.Item, _game.TimeToNext, _game.TimeToReset, _playerProfile);
 
             _currentController.AddController(amountsInformationController);
             _currentController.AddController(rewardsController);
@@ -122,6 +144,16 @@ namespace Car
                 var xmlSerializer = new XmlSerializer(typeof(UserData));
                 xmlSerializer.Serialize(outputStream, _userData);
             }
+        }
+
+        private void DeleteObjects()
+        {
+            foreach(var assetHandle in assetHandles.Values)
+            {
+                if(assetHandle.assetObject != null)
+                    Addressables.Release<GameObject>(assetHandle.assetObject);
+            }
+            assetHandles.Clear();
         }
     }
 }

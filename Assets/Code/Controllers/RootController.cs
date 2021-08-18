@@ -29,6 +29,11 @@ namespace Car
             return newObject.GetComponent<T>();
         }
 
+        public void AddNewObject(GameObject newObject)
+        {
+            AddObject(newObject);
+        }
+
         private IInventoryController CreateInventoryController(IItemUpgradeConfig[] configs, Transform uiroot)
         {
             var inventoryView = LoadAndAdd<IInventoryView>(inventoryViewPath, uiroot);
