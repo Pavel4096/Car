@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Xml.Serialization;
+﻿using System;
 using System.IO;
+using System.Collections.Generic;
+using System.Xml.Serialization;
 using Car.Utilities;
 using Car.Rewards;
 using Car.Fight;
+using Car.Notifications;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
@@ -20,6 +22,7 @@ namespace Car
         private RootController _currentController;
         private PlayerProfile _playerProfile;
         private IUserData _userData;
+        private LanguageSelectorController _languageSelectorController;
 
         private Dictionary<string, AssetHandle> assetHandles = new Dictionary<string, AssetHandle>();
 
@@ -36,16 +39,19 @@ namespace Car
             moveProperty = new Property<float>();
             garageProperty = new Property();
             abilitiesProperty = new Property();
-            _playerProfile = new PlayerProfile(new Car(carSpeed), gameState, new AnalyticsUtility(), new AdsUtility());
+            _playerProfile = new PlayerProfile(new Car(carSpeed), gameState, new AnalyticsUtility(), new AdsUtility(), GetNotificationUtility());
             _userData = GetUserData();
             gameState.Subscribe(StateChanged);
 
             gameState.Value = GameState.MainMenu;
             _playerProfile.AnalyticsUtility.GameStartTime();
+            ShowRewardsNotification();
+            _languageSelectorController = new LanguageSelectorController(_game.LanguageSelectorView);
         }
 
         protected override void OnDispose()
         {
+            _languageSelectorController.Dispose();
             gameState.Unsubscribe(StateChanged);
             Application.quitting -= SaveUserData;
         }
@@ -154,6 +160,30 @@ namespace Car
                     Addressables.Release<GameObject>(assetHandle.assetObject);
             }
             assetHandles.Clear();
+        }
+
+        private INotificationUtility GetNotificationUtility()
+        {
+#if UNITY_ANDROID
+            return new AndroidNotificationUtility();
+#else
+            return null;
+#endif
+        }
+
+        private void ShowRewardsNotification()
+        {
+            if(_playerProfile.CurrentRewardsNotificationIdentifier.HasValue)
+                _playerProfile.NotificationUtility.RemoveNotification(_playerProfile.CurrentRewardsNotificationIdentifier.Value);
+            
+            if(_userData.CurrentRewardIndex < _game.Rewards.Length)
+            {
+                var timeToWait = _userData.LastTimeRewardTaken + new TimeSpan(0, 0, _game.TimeToNext) - DateTime.UtcNow;
+                if(timeToWait.TotalMilliseconds < 0)
+                    timeToWait = new TimeSpan(0);
+                var date = DateTime.Now + timeToWait;
+                _playerProfile.CurrentRewardsNotificationIdentifier = _playerProfile.NotificationUtility.Send(NotificationType.Ordinary, "Rewards", "You can get a reward now", date);
+            }
         }
     }
 }
