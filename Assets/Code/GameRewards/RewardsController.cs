@@ -1,4 +1,5 @@
 ﻿using Car.Utilities;
+using Car.Notifications;
 using System;
 using UnityEngine;
 
@@ -11,6 +12,7 @@ namespace Car.Rewards
         private IUserData _userData;
         private IAmountsInformationController _amountsInformationController;
         private PlayerProfile _playerProfile;
+        private int? _currentNotification;
 
         private readonly int _timeToNext;
         private readonly int _timeToReset;
@@ -30,6 +32,8 @@ namespace Car.Rewards
             _rewardsView.SetCurrent(_userData.CurrentRewardIndex);
             _rewardsView.ButtonClicked += ProcessButtonClick;
             _rewardsView.ExitButtonClicked += QuitRewards;
+
+            ShowNotification();
         }
 
         public void UpdateTimer()
@@ -42,8 +46,8 @@ namespace Car.Rewards
             }
             else
             {
-                if(timeToWait.TotalSeconds < 0)
-                timeToWait = new TimeSpan(0);
+                if(timeToWait.TotalSeconds <= 0)
+                    timeToWait = new TimeSpan(0);
                 var timeToWaitPercent = (float)timeToWait.TotalSeconds/_timeToNext;
                 _rewardsView.SetTimer(timeToWait, timeToWaitPercent);
             }
@@ -80,6 +84,7 @@ namespace Car.Rewards
                 _amountsInformationController.UpdateData();
             }
             _rewardsView.SetCurrent(_userData.CurrentRewardIndex);
+            ShowNotification();
         }
 
         private void AddReward()
@@ -106,6 +111,21 @@ namespace Car.Rewards
         private void QuitRewards()
         {
             _playerProfile.GameState.Value = GameState.MainMenu;
+        }
+
+        private void ShowNotification()
+        {
+            if(_playerProfile.CurrentRewardsNotificationIdentifier.HasValue)
+                _playerProfile.NotificationUtility.RemoveNotification(_playerProfile.CurrentRewardsNotificationIdentifier.Value);
+            
+            if(_userData.CurrentRewardIndex < _rewards.Length)
+            {
+                var timeToWait = _userData.LastTimeRewardTaken + new TimeSpan(0, 0, _timeToNext) - DateTime.UtcNow;
+                if(timeToWait.TotalMilliseconds < 0)
+                    timeToWait = new TimeSpan(0);
+                var date = DateTime.Now + timeToWait;
+                _playerProfile.CurrentRewardsNotificationIdentifier = _playerProfile.NotificationUtility.Send(NotificationType.Ordinary, "Rewards", "You can get reward now", date);
+            }
         }
     }
 }

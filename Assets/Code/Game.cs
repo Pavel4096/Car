@@ -30,11 +30,15 @@ namespace Car
         private int _timeToNext = 1*60;
         [SerializeField]
         private int _timeToReset = 1*60;
+        [SerializeField]
+        private LanguageSelectorView _languageSelectorView;
 
         public GameObject Item => _item;
         public Reward[] Rewards => _rewards;
         public int TimeToNext => _timeToNext;
         public int TimeToReset => _timeToReset;
+
+        public LanguageSelectorView LanguageSelectorView => _languageSelectorView;
         
         private GameController gameController;
 
@@ -67,16 +71,20 @@ namespace Car
                 var assetHandle = assetHandleEntry.Value;
                 handle = Addressables.LoadAssetAsync<GameObject>(assetHandle.name);
                 yield return handle;
+
                 if(handle.Status != AsyncOperationStatus.Succeeded)
                 {
                     Debug.Log($"Failed to load asset '{assetHandle.name}'");
                 }
+
                 handle = Addressables.InstantiateAsync(assetHandle.name, menuRoot, false);
                 yield return handle;
+                
                 if(handle.Status != AsyncOperationStatus.Succeeded)
                 {
                     Debug.Log($"Failed to create object from asset '{assetHandle.name}'");
                 }
+
                 assetHandle.assetObject = handle.Result;
             }
 
